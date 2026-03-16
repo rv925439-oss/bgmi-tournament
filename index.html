@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BGMI India Cup</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+margin:0;
+text-align:center;
+}
+
+header{
+background:#111827;
+padding:20px;
+font-size:28px;
+}
+
+nav{
+background:#1f2937;
+padding:10px;
+}
+
+nav button{
+margin:5px;
+padding:10px;
+background:#f59e0b;
+border:none;
+color:white;
+cursor:pointer;
+}
+
+section{
+display:none;
+padding:20px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+border:1px solid #444;
+padding:8px;
+}
+
+input{
+padding:8px;
+margin:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+🏆 BGMI INDIA CUP
+</header>
+
+<nav>
+
+<button onclick="showPage('home')">Home</button>
+<button onclick="showPage('register')">Register</button>
+<button onclick="showPage('teams')">Teams</button>
+<button onclick="showPage('payment')">Entry Fee</button>
+<button onclick="showPage('leaderboard')">Leaderboard</button>
+<button onclick="showPage('room')">Room</button>
+<button onclick="showPage('login')">Admin</button>
+
+</nav>
+
+<section id="home">
+
+<h2>BGMI Tournament</h2>
+
+<p>Entry Fee ₹100</p>
+<p>Winner ₹1000</p>
+<p>Runner Up ₹500</p>
+
+</section>
+
+<section id="register">
+
+<h2>Team Registration</h2>
+
+<input id="team" placeholder="Team Name"><br>
+<input id="leader" placeholder="Team Leader"><br>
+<input id="upi" placeholder="Leader UPI"><br>
+
+<h3>Players</h3>
+
+<input id="p1" placeholder="Player 1 BGMI ID"><br>
+<input id="p2" placeholder="Player 2 BGMI ID"><br>
+<input id="p3" placeholder="Player 3 BGMI ID"><br>
+<input id="p4" placeholder="Player 4 BGMI ID"><br>
+
+<button onclick="registerTeam()">Register</button>
+
+</section>
+
+<section id="teams">
+
+<h2>Registered Teams</h2>
+
+<table>
+
+<tr>
+<th>Team</th>
+<th>Leader</th>
+<th>UPI</th>
+<th>P1</th>
+<th>P2</th>
+<th>P3</th>
+<th>P4</th>
+</tr>
+
+<tbody id="teamlist"></tbody>
+
+</table>
+
+</section>
+
+<section id="payment">
+
+<h2>Entry Fee Payment</h2>
+
+<p>UPI ID: <b>7082976645@pthdfc</b></p>
+
+<h3>Scan QR</h3>
+
+<img src="1000518413.jpg" width="200">
+
+</section>
+
+<section id="leaderboard">
+
+<h2>Leaderboard</h2>
+
+<table>
+
+<tr>
+<th>Team</th>
+<th>Kills</th>
+<th>Dinner</th>
+<th>Points</th>
+</tr>
+
+<tbody id="board"></tbody>
+
+</table>
+
+</section>
+
+<section id="room">
+
+<h2>Room Details</h2>
+
+<p id="roomid">Room ID: Not Set</p>
+<p id="password">Password: Not Set</p>
+
+</section>
+
+<section id="login">
+
+<h2>Admin Login</h2>
+
+<input id="user" placeholder="Username"><br>
+<input id="pass" type="password"><br>
+
+<button onclick="login()">Login</button>
+
+</section>
+
+<section id="admin">
+
+<h2>Admin Dashboard</h2>
+
+<h3>Update Room</h3>
+
+<input id="newroom" placeholder="Room ID"><br>
+<input id="newpass" placeholder="Password"><br>
+
+<button onclick="updateRoom()">Update</button>
+
+<h3>Add Score</h3>
+
+<input id="teamname" placeholder="Team"><br>
+<input id="kills" placeholder="Kills"><br>
+<input id="dinner" placeholder="Chicken Dinner"><br>
+
+<button onclick="addScore()">Add</button>
+
+</section>
+
+<script>
+
+let teams=JSON.parse(localStorage.getItem("teams"))||[]
+let board=JSON.parse(localStorage.getItem("board"))||[]
+
+function showPage(page){
+
+document.querySelectorAll("section").forEach(s=>s.style.display="none")
+
+document.getElementById(page).style.display="block"
+
+}
+
+showPage("home")
+
+function registerTeam(){
+
+let team={
+
+name:team.value,
+leader:leader.value,
+upi:upi.value,
+p1:p1.value,
+p2:p2.value,
+p3:p3.value,
+p4:p4.value
+
+}
+
+teams.push(team)
+
+localStorage.setItem("teams",JSON.stringify(teams))
+
+loadTeams()
+
+alert("Team Registered")
+
+}
+
+function loadTeams(){
+
+teamlist.innerHTML=""
+
+teams.forEach(t=>{
+
+teamlist.innerHTML+=`
+
+<tr>
+<td>${t.name}</td>
+<td>${t.leader}</td>
+<td>${t.upi}</td>
+<td>${t.p1}</td>
+<td>${t.p2}</td>
+<td>${t.p3}</td>
+<td>${t.p4}</td>
+</tr>
+
+`
+
+})
+
+}
+
+loadTeams()
+
+function login(){
+
+if(user.value=="admin" && pass.value=="1234"){
+
+showPage("admin")
+
+}else{
+
+alert("Wrong Login")
+
+}
+
+}
+
+function updateRoom(){
+
+roomid.innerText="Room ID: "+newroom.value
+password.innerText="Password: "+newpass.value
+
+}
+
+function addScore(){
+
+let team=teamname.value
+let kills=parseInt(kills.value)
+let dinner=parseInt(dinner.value)
+
+let points=(kills*2)+(dinner*10)
+
+board.push({team,kills,dinner,points})
+
+localStorage.setItem("board",JSON.stringify(board))
+
+loadBoard()
+
+}
+
+function loadBoard(){
+
+document.getElementById("board").innerHTML=""
+
+board.forEach(s=>{
+
+document.getElementById("board").innerHTML+=`
+
+<tr>
+<td>${s.team}</td>
+<td>${s.kills}</td>
+<td>${s.dinner}</td>
+<td>${s.points}</td>
+</tr>
+
+`
+
+})
+
+}
+
+loadBoard()
+
+</script>
+
+</body>
+</html>
